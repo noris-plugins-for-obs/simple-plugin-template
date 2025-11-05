@@ -24,6 +24,11 @@ with this program. If not, see <https://www.gnu.org/licenses/>
 OBS_DECLARE_MODULE()
 OBS_MODULE_USE_DEFAULT_LOCALE(PLUGIN_NAME, "en-US")
 
+const char *obs_module_name(void)
+{
+	return obs_module_text("Module.Name");
+}
+
 bool obs_module_load(void)
 {
 	int version_major = atoi(obs_get_version_string());
