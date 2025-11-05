@@ -1,0 +1,7 @@
+*~
+.*.swp
+.DS_Store
+/release/
+
+.vscode
+.idea
