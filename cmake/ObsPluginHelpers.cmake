@@ -172,48 +172,26 @@ if(OS_MACOS)
 		set(MACOSX_PLUGIN_SHORT_VERSION_STRING "${MACOSX_BUNDLE_SHORT_VERSION_STRING}" PARENT_SCOPE)
 		set(MACOSX_PLUGIN_EXECUTABLE_NAME "${target}" PARENT_SCOPE)
 
-		if("${MACOSX_PLUGIN_BUNDLE_TYPE}" STREQUAL "BNDL")
-			message(STATUS "Bundle type plugin")
+		install(
+			TARGETS ${target}
+			LIBRARY DESTINATION "."
+			COMPONENT obs_plugins
+			NAMELINK_COMPONENT ${target}_Development)
 
-			install(
-				TARGETS ${target}
-				LIBRARY DESTINATION "."
-				COMPONENT obs_plugins
-				NAMELINK_COMPONENT ${target}_Development)
+		set_target_properties(
+			${target}
+			PROPERTIES
+			BUNDLE ON
+			BUNDLE_EXTENSION "plugin"
+			OUTPUT_NAME ${target}
+			MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/bundle/macOS/Plugin-Info.plist.in"
+			XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${MACOSX_PLUGIN_GUI_IDENTIFIER}"
+			XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "${OBS_BUNDLE_CODESIGN_IDENTITY}"
+			XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/bundle/macOS/entitlements.plist")
 
-			set_target_properties(
-				${target}
-				PROPERTIES
-				BUNDLE ON
-				BUNDLE_EXTENSION "plugin"
-				OUTPUT_NAME ${target}
-				MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/bundle/macOS/Plugin-Info.plist.in"
-				XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${MACOSX_PLUGIN_GUI_IDENTIFIER}"
-				XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "${OBS_BUNDLE_CODESIGN_IDENTITY}"
-				XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/bundle/macOS/entitlements.plist")
+		install_bundle_resources(${target})
 
-			install_bundle_resources(${target})
-
-			set(FIRST_DIR_SUFFIX ".plugin" PARENT_SCOPE)
-		else()
-			message(STATUS "Old type plugin")
-
-			install(
-				TARGETS ${target}
-				LIBRARY DESTINATION "${target}/bin/"
-				COMPONENT obs_plugins
-				NAMELINK_COMPONENT ${target}_Development)
-
-			if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/data)
-				install(
-					DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/data/
-					DESTINATION "${target}/data/"
-					USE_SOURCE_PERMISSIONS
-					COMPONENT obs_plugins)
-			endif()
-			set(FIRST_DIR_SUFFIX "" PARENT_SCOPE)
-		endif()
-
+		set(FIRST_DIR_SUFFIX ".plugin" PARENT_SCOPE)
 	endfunction()
 
 	function(install_bundle_resources target)
