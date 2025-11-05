@@ -201,7 +201,6 @@ jobs:
           . build/ci/ci_includes.generated.sh
           pkgfile=package/${PLUGIN_NAME}${PKG_SUFFIX}.pkg
           set -e
-          . build/ci/ci_includes.generated.sh
           productsign --sign "${{ secrets.MACOS_SIGNING_INSTALLER_IDENTITY }}" $pkgfile package/${PLUGIN_NAME}-signed.pkg
           mv package/${PLUGIN_NAME}-signed.pkg $pkgfile
 
