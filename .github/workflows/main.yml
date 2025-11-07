@@ -257,3 +257,38 @@ jobs:
         with:
           name: ${{ env.artifactName }}-windows-obs${{ matrix.obs }}-${{ matrix.arch }}
           path: package/*
+
+  fedora_build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Check plugin version
+        id: version
+        run: |
+          set -e
+          version="$(git describe --tags | sed -e 's/-\([0-9]\+\)-g\([0-9a-f]\+\)$/^\1.git\2/' -e 's/-\(rc[0-9]*\)/~\1/')"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Build plugin
+        uses: noris-plugins-for-obs/fedora-plugin-devel@main
+        with:
+          spec: packaging/fedora/*.spec
+          version: ${{ steps.version.outputs.version }}
+          rpmbuild_dir: fc-rpmbuild
+
+      - name: Move RPM files
+        run: |
+          set -e
+          mkdir package
+          find fc-rpmbuild/{RPMS,SRPMS} -type f | xargs -I {} mv {} package/
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.artifactName }}-fedora
+          path: package/*
