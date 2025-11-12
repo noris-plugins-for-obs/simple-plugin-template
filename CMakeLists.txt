@@ -62,11 +62,15 @@ if(OS_WINDOWS)
 	endif()
 
 	target_link_libraries(${PROJECT_NAME} OBS::w32-pthreads)
+
+	set(LICENSE_DESTINATION "data/obs-plugins/${PROJECT_NAME}")
 endif()
 
 if(OS_LINUX)
 	target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra)
 	target_link_options(${PROJECT_NAME} PRIVATE -Wl,-z,defs)
+
+	set(LICENSE_DESTINATION ${CMAKE_INSTALL_DOCDIR})
 
 	if(ENABLE_COVERAGE)
 		target_compile_options(${PROJECT_NAME} PRIVATE -coverage -fprofile-update=atomic)
@@ -77,6 +81,8 @@ endif()
 if(APPLE)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++ -fvisibility=default")
 
+	set(LICENSE_DESTINATION "${PROJECT_NAME}.plugin/Contents/Resources")
+
 	set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
 	set(MACOSX_PLUGIN_GUI_IDENTIFIER "${MACOS_BUNDLEID}")
 	set(MACOSX_PLUGIN_BUNDLE_VERSION "${PROJECT_VERSION}")
@@ -86,6 +92,14 @@ endif()
 file(GENERATE OUTPUT .gitignore CONTENT "*\n")
 
 setup_plugin_target(${PROJECT_NAME})
+
+option(INSTALL_LICENSE_FILES "Install license files" ON)
+if(INSTALL_LICENSE_FILES)
+	install(FILES
+		LICENSE
+		DESTINATION ${LICENSE_DESTINATION}
+	)
+endif()
 
 if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
 	configure_file(
