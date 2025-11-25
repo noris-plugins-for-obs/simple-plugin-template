@@ -221,7 +221,7 @@ else()
 	set(OBS_OUTPUT_DIR ${CMAKE_BINARY_DIR}/rundir)
 
 	if(OS_POSIX)
-		option(LINUX_PORTABLE "Build portable version (Linux)" ON)
+		option(LINUX_PORTABLE "Build portable version (Linux)" OFF)
 		option(LINUX_RPATH "Set runpath (Linux)" ON)
 		if(NOT LINUX_PORTABLE)
 			set(OBS_LIBRARY_DESTINATION ${CMAKE_INSTALL_LIBDIR})
