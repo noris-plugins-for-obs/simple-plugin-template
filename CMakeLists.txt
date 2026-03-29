@@ -125,4 +125,8 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
 		installer/installer-macOS.pkgproj.in
 		installer-macOS.generated.pkgproj
 	)
+	configure_file(
+		installer/installer-macOS-post.sh.in
+		installer-macOS-post.generated.sh
+	)
 endif()
