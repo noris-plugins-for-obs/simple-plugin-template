@@ -244,12 +244,26 @@ jobs:
             logs/*
 
   windows_build:
-    runs-on: windows-2022
+    runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
       matrix:
-        obs: [28, 30, 31, 32]
-        arch: [x64]
+        include:
+          - obs: 28
+            arch: 'x64'
+            runner: 'windows-2022'
+          - obs: 30
+            arch: 'x64'
+            runner: 'windows-2022'
+          - obs: 31
+            arch: 'x64'
+            runner: 'windows-2022'
+          - obs: 32
+            arch: 'x64'
+            runner: 'windows-2022'
+          - obs: 32
+            arch: 'arm64'
+            runner: 'windows-11-arm'
     env:
       visualStudio: 'Visual Studio 17 2022'
       Configuration: 'RelWithDebInfo'
@@ -268,6 +282,7 @@ jobs:
         with:
           obs: ${{ matrix.obs }}
           qt: ${{ env.qt }}
+          arch: ${{ matrix.arch }}
 
       - name: Build plugin
         run: |
@@ -280,7 +295,7 @@ jobs:
           cmake --install build --config RelWithDebInfo --prefix "$(Resolve-Path -Path .)/release"
 
       - name: Package plugin
-        run: ci/windows/package-windows.cmd ${{ matrix.obs }}
+        run: ci/windows/package-windows.cmd ${{ matrix.obs }} ${{ matrix.arch }}
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v7
