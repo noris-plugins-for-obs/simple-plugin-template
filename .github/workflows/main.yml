@@ -96,8 +96,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        obs: [28, 30, 31, 32, 33]
-        arch: ['universal']
+        include:
+          - obs: 28
+            arch: 'universal'
+            obs-onsdriver: '< 31'
+          - obs: 30
+            arch: 'universal'
+            obs-onsdriver: '< 31'
+          - obs: 31
+            arch: 'universal'
+            obs-onsdriver: '< 32'
+          - obs: 32
+            arch: 'universal'
+            obs-onsdriver: '< 33'
+          - obs: 33
+            arch: 'universal'
     defaults:
       run:
         shell: bash
@@ -232,6 +245,7 @@ jobs:
         with:
           obs-plugins: package/*.pkg
           first-time-log: ./logs/
+          obs-version: ${{ matrix.obs-onsdriver }}
 
       - name: 'Test with onsdriver'
         run: |
@@ -257,15 +271,19 @@ jobs:
           - obs: 30
             arch: 'x64'
             runner: 'windows-2022'
+            obs-onsdriver: '< 31'
           - obs: 31
             arch: 'x64'
             runner: 'windows-2022'
+            obs-onsdriver: '< 32'
           - obs: 32
             arch: 'x64'
             runner: 'windows-2022'
+            obs-onsdriver: '< 33'
           - obs: 32
             arch: 'arm64'
             runner: 'windows-11-arm'
+            obs-onsdriver: '< 33'
           - obs: 33
             arch: 'x64'
             runner: 'windows-2025-vs2026'
@@ -313,6 +331,7 @@ jobs:
         with:
           obs-plugins: package/*.exe
           first-time-log: ./logs/
+          obs-version: ${{ matrix.obs-onsdriver }}
 
       - name: 'Test with onsdriver'
         run: |
